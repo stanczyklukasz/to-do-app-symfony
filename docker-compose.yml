@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  mysql:
+    container_name: 'todo_mysql'
+    image: 'mysql:8.0.23'
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=databasename
+      - MYSQL_USER=username
+      - MYSQL_PASSWORD=userpass
+    volumes:
+      - mysql-database:/var/lib/mysql:rw
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+  app:
+    container_name: 'todo_app'
+    build:
+      context: ./docker/php
+    volumes:
+    - .:/var/www/html
+    ports:
+      - 80:80
+    depends_on:
+      - mysql
+    networks:
+      - backend
+
+volumes:
+  mysql-database:
+    external: true
+
+networks:
+  backend:
